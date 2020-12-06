@@ -1,12 +1,12 @@
-import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { User } from './entities/user/user.entity';
 import { ConnectionOptions } from 'typeorm';
 import { AuthenticationModule } from './modules/authentication/authentication.module';
 import { UsersModule } from './modules/users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { JwtModule } from '@nestjs/jwt';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import * as Joi from '@hapi/joi'
+import { TestModule } from 'modules/testing/test.module';
+import { Lobby } from 'entities/lobby.entity';
+import { LobbyModule } from 'modules/lobby/lobby.module';
 
 // const {
 //   ENV,
@@ -37,14 +37,16 @@ const POSTGRES_DB_CONFIG: ConnectionOptions = {
   password: POSTGRES_PASSWORD,
   database: POSTGRES_DB,
   logging: ['error'],
-  entities: [User],
+  entities: [User, Lobby],
   synchronize: true
 };
 @Module({
   imports: [
     TypeOrmModule.forRoot(POSTGRES_DB_CONFIG),
     AuthenticationModule,
-    UsersModule    
+    UsersModule,
+    TestModule,
+    LobbyModule
   ],
   controllers: [],
   providers: [],

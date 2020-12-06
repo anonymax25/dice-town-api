@@ -15,10 +15,12 @@ export class AuthenticationService {
   public async register(registrationData: RegisterDto) {
     const hashedPassword = await bcrypt.hash(registrationData.password, 10);
 
-    const createdUser = await this.usersService.create({
-      ...registrationData,
-      password: hashedPassword
-    });
+    let newUser = new User()
+    newUser.email = registrationData.email
+    newUser.password = hashedPassword
+    newUser.name = registrationData.name
+
+    const createdUser = await this.usersService.save(newUser);
     if(!createdUser)
       throw new HttpException('User with that email already exists', HttpStatus.CONFLICT);
 
@@ -27,15 +29,15 @@ export class AuthenticationService {
 }
 
   async login(user: User) {
-    const payload = { name: user.name, email: user.email, sub: user.id };
+    const payload = { name: user.name, id: user.id };
     return {
-      access_token: this.jwtService.sign(payload),
+      token: this.jwtService.sign(payload),
     };
   }
 
   public async getAuthenticatedUser(email: string, plainTextPassword: string): Promise<User> {
     try {
-      const user = await this.usersService.getByEmail(email);
+      const user = await (await this.usersService.find({email})).shift();
       await this.verifyPassword(plainTextPassword, user.password);
       return user;
     } catch (error) {

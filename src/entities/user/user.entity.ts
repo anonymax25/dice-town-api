@@ -1,5 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { Exclude } from 'class-transformer';
+import { Lobby } from 'entities/lobby.entity';
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class User {
@@ -14,6 +14,10 @@ export class User {
 
   @Column()
   public password: string;
+
+  @ManyToMany(type => Lobby, lobby => lobby.users, { cascade: true })
+  @JoinTable()
+  public lobbies: Lobby[]
 }
 
 export default User;
