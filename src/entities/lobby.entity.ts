@@ -1,8 +1,8 @@
-import User from "entities/user/user.entity";
-import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import User from "entities/user.entity";
+import { BaseEntity, Column, CreateDateColumn, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity()
-export class Lobby {
+export class Lobby extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number
 
@@ -15,13 +15,21 @@ export class Lobby {
     @Column()
     ownerId: number
 
-    @Column()
+    @Column("boolean", { default: true })
     is_private: boolean
 
     @ManyToMany(type => User, user => user.lobbies)
-    @JoinTable()
+    // @JoinTable({
+    //     name: "user_lobby",
+    //     joinColumns: [
+    //         {name: 'lobbyId', referencedColumnName: "id"}
+    //     ],
+    //     inverseJoinColumns: [
+    //         {name: 'userId', referencedColumnName: "id"}
+    //     ]
+    // })
     users: User[]
 
-    @CreateDateColumn()
-    created_at: Date
+    // @CreateDateColumn()
+    // created_at: Date
 }

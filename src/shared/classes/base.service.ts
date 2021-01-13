@@ -53,7 +53,7 @@ export class BaseService<T> {
   }
 
   async findOneById(id: number, select?: (keyof T)[]) {
-    return await this.findOne({ id }, select)
+    return await this.findOne({ id: id }, select)
   }
 
   async findOneOrFail(params: WhereParams, select?: (keyof T)[]): Promise<T> {

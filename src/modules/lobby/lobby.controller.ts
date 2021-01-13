@@ -1,4 +1,4 @@
-import { Body, Request, Controller, Delete, Get, HttpException, HttpStatus, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Request, Controller, Delete, Get, HttpException, HttpStatus, Post, Put, Query, UseGuards, Param } from '@nestjs/common';
 import { Lobby } from 'entities/lobby.entity';
 import JwtAuthenticationGuard from 'modules/authentication/passport/jwt-authentication.guard';
 import RequestWithUser from 'modules/authentication/requestWithUser.interface';
@@ -12,30 +12,21 @@ export class LobbyController {
 
 
   @Get(':code')
-  
-  async get(@Request() req, @Query('code') code): Promise<Lobby> {
+  async get(@Param() params): Promise<Lobby> {
+    const code = params.code
     if (!code)
-      throw new HttpException(
-        'CODE parameter is missing',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException('CODE parameter is missing', HttpStatus.BAD_REQUEST);
 
-    const room = await this.lobbyService.findOne({code});
+    const room = await this.lobbyService.findLobbyComplete('lobby.code = :code', {code})
+
     if (!room)
-      throw new HttpException(
-        `The room with the code: ${code} does not exists`,
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(`The room with the code: ${code} does not exists`, HttpStatus.BAD_REQUEST);
 
     return room;
   }
 
   @Post()
   async create(@Request() req: RequestWithUser): Promise<Lobby> {
-    // if (!body || (body && Object.keys(body).length === 0))
-    //   throw new HttpException('Missing informations', HttpStatus.BAD_REQUEST);
-    console.log(req.user);
-    
     return await this.lobbyService.create(req.user.id);
   }
 
@@ -49,6 +40,16 @@ export class LobbyController {
       );
 
     await this.lobbyService.updateFields(id, req.body);
+  }
+  
+  @Put(':code/join/:uid')
+  async addUserToLobby(@Request() req) {
+    const code = req.params.code
+    const uid = req.params.uid
+    if (!code || !uid)
+      throw new HttpException('CODE or UID parameter is missing', HttpStatus.BAD_REQUEST);
+
+    return await this.lobbyService.addUserToLobby(uid, code);
   }
 
   @Delete(':id')

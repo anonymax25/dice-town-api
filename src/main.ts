@@ -5,14 +5,15 @@ import * as express from 'express';
 import * as rateLimit from 'express-rate-limit';
 import * as bodyParser from 'body-parser'
 import * as compression from 'compression';
-import * as contextService from 'request-context';
+//import * as contextService from 'request-context';
 import * as cors from 'cors';
 
 const { PORT } = process.env
 
 async function bootstrap() {
+  
   const expressApp = express();
-  const app = await NestFactory.create(AppModule, expressApp, { cors: {
+  const app = await NestFactory.create(AppModule, { cors: {
     "origin": "*",
     "methods": "OPTIONS,GET,HEAD,PUT,PATCH,POST,DELETE",
     "allowedHeaders" : ['*'],
@@ -32,7 +33,7 @@ async function bootstrap() {
   app.enableCors();
   app.use(cors())
   app.use(compression());
-  app.use(contextService.middleware('request'));
+  //app.use(contextService.middleware('request'));
   app.use(limiter)
   app.use(bodyParser.json({ limit: '20mb' }));
   app.use(bodyParser.urlencoded({ extended: true, limit: '20mb' }));
