@@ -1,6 +1,11 @@
 import { Logger } from '@nestjs/common';
 import { OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer, WsResponse } from '@nestjs/websockets';
+import { Message } from 'entities/chat/message.entity';
+import { SocketMessage } from 'entities/chat/messageSocket';
+import { Lobby } from 'entities/lobby.entity';
+import { LobbyService } from 'modules/lobby/lobby.service';
 import { Server, Socket } from 'socket.io';
+import { MessageService } from './message.service';
 
 
 @WebSocketGateway(3001,{
@@ -15,27 +20,35 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   
   private logger: Logger = new Logger("ChatGateway")
 
+  constructor(private messageService: MessageService,
+              private lobbyService: LobbyService){
+
+  }
+  
   afterInit(server: Server) {    
     this.logger.log("Initialized!")
   }
 
   handleDisconnect(client: Socket) {
-    this.logger.log("client disconnected!", client.id)
+    //this.logger.log("client disconnected!", client.id)
   }
 
   handleConnection(client: Socket, ...args: any[]) {
-    this.logger.log("client connected!", client.id)
+    //this.logger.log("client connected!", client.id)
   }
 
-  @SubscribeMessage('msgToServer')
-  handleMessage(client: Socket, text: string): WsResponse<string> {
-    return {event: 'msgToClient', data: text + "_from-server"};//client.emit("msgToClient", text)
-  }
-  
-  //msg to all connected users
-  @SubscribeMessage('chatToServerAll')
-  handleMessageAll(client: Socket, message: {sender: string, room: string, text: string}): void {
-   this.server.to(message.room).emit('msgToClient', message)
+  @SubscribeMessage('chatToRoom')
+  async handleMessageAll(client: Socket, socketMessage: SocketMessage) {
+
+    const message = new Message()
+    message.user = socketMessage.user
+    message.room = socketMessage.room
+    message.message = socketMessage.message
+
+    let res = await this.messageService.save(message)
+    this.lobbyService.addMessageToLobby(res, socketMessage.lobbyId)
+    
+    this.server.to(message.room).emit('recieveMessage', message)
   }
 
   @SubscribeMessage('joinRoom')
@@ -48,7 +61,4 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     client.leave(room)
     client.emit('leftRoom', room)
   }
-    
-  
-
 }

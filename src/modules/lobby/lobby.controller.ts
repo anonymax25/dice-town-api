@@ -17,7 +17,7 @@ export class LobbyController {
     if (!code)
       throw new HttpException('CODE parameter is missing', HttpStatus.BAD_REQUEST);
 
-    const room = await this.lobbyService.findLobbyComplete('lobby.code = :code', {code})
+    const room = await this.lobbyService.findOneLobbyPopulate({code: code})
 
     if (!room)
       throw new HttpException(`The room with the code: ${code} does not exists`, HttpStatus.BAD_REQUEST);
@@ -31,8 +31,7 @@ export class LobbyController {
   }
 
   @Put(':id')
-  async update(@Request() req) {
-    const id = req.params.id;
+  async update(@Request() req: RequestWithUser, @Param('id') id) {
     if (!id)
       throw new HttpException(
         'ID parameter is missing',
@@ -43,13 +42,22 @@ export class LobbyController {
   }
   
   @Put(':code/join/:uid')
-  async addUserToLobby(@Request() req) {
-    const code = req.params.code
-    const uid = req.params.uid
+  async addUserToLobby(@Request() req: RequestWithUser, @Param('code') code, @Param('uid') uid) {    
+    if(req.user.id != uid)
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED)
+    if (!code || !uid)
+      throw new HttpException('CODE or UID parameter is missing', HttpStatus.BAD_REQUEST);
+    return await this.lobbyService.addUserToLobby(uid, code);
+  }
+  
+  @Put(':code/quit/:uid')
+  async removeUserToLobby(@Request() req: RequestWithUser, @Param('code') code, @Param('uid') uid) {    
+    if(req.user.id != uid)
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED)
     if (!code || !uid)
       throw new HttpException('CODE or UID parameter is missing', HttpStatus.BAD_REQUEST);
 
-    return await this.lobbyService.addUserToLobby(uid, code);
+    return await this.lobbyService.removeUserFromLobby(uid, code);
   }
 
   @Delete(':id')

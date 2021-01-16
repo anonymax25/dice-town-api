@@ -72,7 +72,7 @@
             methods: {
                 sendChatMessage() {
                     if(this.isMemberOfActiveRoom){
-                        this.socket.chat.emit('chatToServerAll', {sender: this.username ,text: this.text, room: this.activeRoom})
+                        this.socket.chat.emit('chatToRoom', {sender: this.username ,text: this.text, room: this.activeRoom})
                         this.text = ''
                     } else {
                         alert("You must be a member of the active room to send a message")
@@ -101,7 +101,7 @@
             created() {
                 this.username = prompt('Enter username: ')
                 this.socket.chat = io('http://localhost:3001/chat', {path: '/websockets'})
-                this.socket.chat.on('msgToClient', (msg) => {
+                this.socket.chat.on('recieveMessage', (msg) => {
                     this.recievedChatMsg(msg)                    
                 })
                 this.socket.chat.on('connect', () => {

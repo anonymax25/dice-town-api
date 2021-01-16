@@ -11,10 +11,11 @@ import * as cors from 'cors';
 const { PORT } = process.env
 
 async function bootstrap() {
-  
-  const expressApp = express();
+  const allowedResponseOrigins = ["http://localhost:4200", "http://localhost:3001"]
+
+  const expressApp = express(); 
   const app = await NestFactory.create(AppModule, { cors: {
-    "origin": "*",
+    "origin": allowedResponseOrigins,
     "methods": "OPTIONS,GET,HEAD,PUT,PATCH,POST,DELETE",
     "allowedHeaders" : ['*'],
     "exposedHeaders" : ['Authorization'],
@@ -30,8 +31,10 @@ async function bootstrap() {
       console.log(`${req.method} ${req.url}\x1b[31m 429\x1b[0m - - ${res._contentLength}`)
     }
   })
-  app.enableCors();
-  app.use(cors())
+  app.enableCors({
+    credentials: true,
+    origin: allowedResponseOrigins
+  });
   app.use(compression());
   //app.use(contextService.middleware('request'));
   app.use(limiter)
