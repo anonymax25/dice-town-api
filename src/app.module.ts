@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { ConnectionOptions } from 'typeorm';
 import { AuthenticationModule } from './modules/authentication/authentication.module';
 import { UsersModule } from './modules/users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -9,6 +8,7 @@ import { join } from 'path';
 import { ChatModule } from 'modules/chat/chat.module';
 import { ServeStaticModule } from '@nestjs/serve-static/dist/serve-static.module';
 import { AlertsModule } from 'modules/alerts/alerts.module';
+import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 
 const {
   POSTGRES_HOST,
@@ -19,7 +19,7 @@ const {
   ENV
 } = process.env
 
-const POSTGRES_DB_CONFIG: ConnectionOptions = {
+const POSTGRES_DB_CONFIG: PostgresConnectionOptions = {
   name: "POSTGRES",
   type: 'postgres',
   host: POSTGRES_HOST,
