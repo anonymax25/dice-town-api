@@ -1,4 +1,4 @@
-import User from "entities/user.entity";
+import User from "./user.entity";
 import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Message } from "./chat/message.entity";
 import { Game } from "./game/game.entity";

@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { UsersModule } from 'modules/users/users.module';
+import { UsersModule } from '../users/users.module';
 import { LobbyController } from './lobby.controller';
 import { LobbyService } from './lobby.service';
 

@@ -1,11 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { Lobby } from 'entities/lobby.entity';
-import { BaseService } from 'shared/classes/base.service';
+import { Lobby } from '../../entities/lobby.entity';
+import { BaseService } from '../../shared/classes/base.service';
 import * as crypto from "crypto"
-import { UsersService } from 'modules/users/users.service';
-import User from 'entities/user.entity';
-import { Game } from 'entities/game/game.entity';
-import { Message } from 'entities/chat/message.entity';
+import { UsersService } from '../users/users.service';
+import { Message } from '../../entities/chat/message.entity';
 
 @Injectable()
 export class LobbyService extends BaseService<Lobby>{

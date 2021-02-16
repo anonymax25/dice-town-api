@@ -5,15 +5,12 @@ import {
   HttpCode,
   Post,
   UseGuards,
-  Get, ClassSerializerInterceptor, UseInterceptors,
+  Get, ClassSerializerInterceptor, UseInterceptors, HttpException, ImATeapotException,
 } from '@nestjs/common';
 import { AuthenticationService } from './authentication.service';
 import RegisterDto from './dto/register.dto';
 import RequestWithUser from './requestWithUser.interface';
 import { LocalAuthenticationGuard } from './passport/local-authentication.guard';
-import { UsersService } from '../users/users.service';
-import JwtAuthenticationGuard from './passport/jwt-authentication.guard';
-import { JwtService } from '@nestjs/jwt';
 
 @Controller('auth')
 @UseInterceptors(ClassSerializerInterceptor)

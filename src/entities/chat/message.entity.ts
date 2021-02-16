@@ -1,4 +1,4 @@
-import { Lobby } from "entities/lobby.entity"
+import { Lobby } from "../lobby.entity"
 import { BaseEntity, Column, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm"
 
 

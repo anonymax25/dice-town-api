@@ -1,7 +1,7 @@
 import { Body, Request, Controller, Delete, Get, HttpException, HttpStatus, Post, Put, Query, UseGuards, Param } from '@nestjs/common';
-import { Lobby } from 'entities/lobby.entity';
-import JwtAuthenticationGuard from 'modules/authentication/passport/jwt-authentication.guard';
-import RequestWithUser from 'modules/authentication/requestWithUser.interface';
+import { Lobby } from '../../entities/lobby.entity';
+import JwtAuthenticationGuard from '../authentication/passport/jwt-authentication.guard';
+import RequestWithUser from '../authentication/requestWithUser.interface';
 import { LobbyService } from './lobby.service';
 
 @Controller('lobby')

@@ -1,4 +1,3 @@
-import { type } from "os";
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { Inventory } from "./inventory";
 import { Player } from "./player";

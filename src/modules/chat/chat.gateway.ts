@@ -1,9 +1,8 @@
 import { Logger } from '@nestjs/common';
 import { OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer, WsResponse } from '@nestjs/websockets';
-import { Message } from 'entities/chat/message.entity';
-import { SocketMessage } from 'entities/chat/messageSocket';
-import { Lobby } from 'entities/lobby.entity';
-import { LobbyService } from 'modules/lobby/lobby.service';
+import { Message } from '../../entities/chat/message.entity';
+import { SocketMessage } from '../../entities/chat/messageSocket';
+import { LobbyService } from '../lobby/lobby.service';
 import { Server, Socket } from 'socket.io';
 import { MessageService } from './message.service';
 
