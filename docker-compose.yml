@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  api:
+    image: "natin56y/dice-town-api"
+    ports:
+      - "3000:3000"
+    networks:
+      - dice-town
+
+  client:
+    image: "natin56y/dice-town-client"
+    ports:
+      - "80:80" 
+    networks:
+      - dice-town 
+
+networks:
+  dice-town:
+    driver: bridge
+
