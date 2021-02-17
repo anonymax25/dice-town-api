@@ -11,7 +11,7 @@ import * as cors from 'cors';
 const { PORT } = process.env
 
 async function bootstrap() {
-  const allowedResponseOrigins = ["http://localhost:4200", "http://localhost:3001"]
+  const allowedResponseOrigins = ["http://localhost:4200", "http://localhost:3001", "http://ec2-34-240-42-153.eu-west-1.compute.amazonaws.com"]
 
   const expressApp = express(); 
   const app = await NestFactory.create(AppModule, { cors: {
