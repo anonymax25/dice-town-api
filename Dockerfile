@@ -1,5 +1,4 @@
-#FROM node:12.18.2
-FROM arm32v6/node:10.23-alpine
+FROM node
 
 ENV ENV prod
 
