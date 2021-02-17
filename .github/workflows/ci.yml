@@ -1,9 +1,8 @@
-name: CD api
+name: ci api
 
 on:
   push:
     branches: [ master ]
-  workflow_dispatch:
 
 jobs:
   push-docker-hub:
