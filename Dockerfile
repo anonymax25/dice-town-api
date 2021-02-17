@@ -1,4 +1,4 @@
-FROM node
+FROM node:12.18.2
 
 ENV ENV prod
 
@@ -12,4 +12,4 @@ COPY . .
 
 EXPOSE 3000
 
-CMD [ "npm", "run", "start" ]
+CMD [ "npm", "run", "start:prod" ]
