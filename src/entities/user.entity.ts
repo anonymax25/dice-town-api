@@ -27,5 +27,3 @@ export class User extends BaseEntity {
   })
   public lobbies: Lobby[]
 }
-
-export default User;
