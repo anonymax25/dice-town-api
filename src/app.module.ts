@@ -9,6 +9,10 @@ import { ChatModule } from './modules/chat/chat.module';
 import { ServeStaticModule } from '@nestjs/serve-static/dist/serve-static.module';
 import { AlertsModule } from './modules/alerts/alerts.module';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
+import { Lobby } from './entities/lobby.entity';
+import { User } from './entities/user.entity';
+import { Message } from './entities/chat/message.entity';
+import { Game } from './entities/game/game.entity';
 
 const {
   POSTGRES_HOST,
@@ -28,7 +32,7 @@ const POSTGRES_DB_CONFIG: PostgresConnectionOptions = {
   password: POSTGRES_PASSWORD,
   database: POSTGRES_DB,
   logging: ['error'],
-  entities: [join(__dirname, "./entities/**/*.ts")],
+  entities: [Lobby, User, Message, Game],
   synchronize: true
 };
 @Module({

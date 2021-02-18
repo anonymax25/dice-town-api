@@ -2,7 +2,7 @@ import { UsersService } from './users.service';
 import { Controller, Req, UseGuards, Get, Put, Body, Query, Param, HttpException, HttpCode, HttpStatus } from '@nestjs/common';
 import JwtAuthenticationGuard from '../authentication/passport/jwt-authentication.guard';
 import RequestWithUser from '../authentication/requestWithUser.interface';
-import User from '../../entities/user.entity';
+import { User } from '../../entities/user.entity';
 import { Lobby } from '../../entities/lobby.entity';
 
 @Controller('user')
