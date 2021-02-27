@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { UsersModule } from '../users/users.module';
 import { LobbyController } from './lobby.controller';
+import { LobbyGateway } from './lobby.gateway';
 import { LobbyService } from './lobby.service';
 
 @Module({
@@ -8,7 +9,8 @@ import { LobbyService } from './lobby.service';
     UsersModule
   ],
   providers: [
-    LobbyService
+    LobbyService,
+    LobbyGateway
   ],
   controllers: [LobbyController],
   exports: [

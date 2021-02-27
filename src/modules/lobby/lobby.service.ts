@@ -4,6 +4,7 @@ import { BaseService } from '../../shared/classes/base.service';
 import * as crypto from "crypto"
 import { UsersService } from '../users/users.service';
 import { Message } from '../../entities/chat/message.entity';
+import { ReadyStatus } from '../../entities/lobby/ready-status';
 
 @Injectable()
 export class LobbyService extends BaseService<Lobby>{
@@ -23,14 +24,18 @@ export class LobbyService extends BaseService<Lobby>{
         const user = await this.usersService.findOne({id: ownerId})
         lobby.users = [user]
         lobby.messages = []
-        return await this.save(lobby)
+        lobby.readyStatus = []
+
+        const lobbyDB = await this.save(lobby)
+        return await this.createReadyStatus(new ReadyStatus(lobbyDB.id, ownerId, false))
     }
 
     async addUserToLobby(userId: number, code: string){
         let lobby = await this.findLobbyComplete('lobby.code = :code ',{code})
         let user = await this.usersService.findOne({id: userId})
         lobby.users.push(user)
-        return await this.save(lobby)
+        await this.save(lobby)
+        return await this.createReadyStatus(new ReadyStatus(lobby.id, userId, false))
     }
     
     async addMessageToLobby(message: Message, lobbyId: number){
@@ -43,6 +48,7 @@ export class LobbyService extends BaseService<Lobby>{
         let lobby = await this.findLobbyComplete('lobby.code = :code ',{code})
         let user = await this.usersService.findOne({id: userId})
         lobby.users.splice(lobby.users.indexOf(user),1)
+        lobby.readyStatus.splice(lobby.readyStatus.findIndex( item => item.uid === userId))
         return await this.save(lobby)
     }
 
@@ -75,5 +81,22 @@ export class LobbyService extends BaseService<Lobby>{
           .where(whereCondition, whereParam)
           .getOne();
           
-      }
+    }
+
+    async changeReadyStatus(readyStatus: ReadyStatus): Promise<Lobby> {
+        let lobby = await this.findOneLobbyPopulate({id: readyStatus.lobbyId})
+        lobby.readyStatus = lobby.readyStatus.map(item => {
+            if(item.uid == readyStatus.uid){
+                item.isReady = readyStatus.isReady
+            }
+            return item
+        })
+        return await this.save(lobby)
+    }
+    
+    async createReadyStatus(readyStatus: ReadyStatus): Promise<Lobby> {
+        let lobby = await this.findOneLobbyPopulate({id: readyStatus.lobbyId})
+        lobby.readyStatus.push(new ReadyStatus(readyStatus.lobbyId, readyStatus.uid, readyStatus.isReady))
+        return await this.save(lobby)
+    }
 }
