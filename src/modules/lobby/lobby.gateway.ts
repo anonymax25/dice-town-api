@@ -52,9 +52,9 @@ export class LobbyGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
   }
   @SubscribeMessage('leaveLobbySocket')
   handleLeaveRoom(client: Socket, body: {lobbyId: string, username: string}){
-    this.server.to(body.lobbyId).emit('userLeftLobby', body.username)
     client.leave(body.lobbyId)
     client.emit('leftLobbySocket', body.lobbyId)
+    this.server.to(body.lobbyId).emit('userLeftLobby', body.username)
   }
 }
 
