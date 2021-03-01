@@ -45,16 +45,17 @@ export class LobbyGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
   }
 
   @SubscribeMessage('joinLobbySocket')
-  handleJoinRoom(client: Socket, body: {lobbyId: string, username: string}){
+  handleJoinRoom(client: Socket, body: {lobbyId: string, username: string, uid: string}){
     this.server.to(body.lobbyId).emit('userJoinedLobby', body.username)
     client.join(body.lobbyId)
     client.emit('joinedLobbySocket', body.lobbyId)
   }
   @SubscribeMessage('leaveLobbySocket')
-  handleLeaveRoom(client: Socket, body: {lobbyId: string, username: string}){
+  handleLeaveRoom(client: Socket, body: {lobbyId: string, username: string, uid: string}){
     client.leave(body.lobbyId)
     client.emit('leftLobbySocket', body.lobbyId)
     this.server.to(body.lobbyId).emit('userLeftLobby', body.username)
+    this.updateReadyStatus(client, new ReadyStatus(parseInt(body.lobbyId), parseInt(body.uid), false))
   }
 }
 
