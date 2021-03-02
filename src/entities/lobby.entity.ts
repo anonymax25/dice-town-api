@@ -21,7 +21,7 @@ export class Lobby extends BaseEntity {
     @Column()
     ownerId: number
 
-    @Column("boolean")
+    @Column('boolean')
     is_private: boolean
 
     @Column('boolean')
