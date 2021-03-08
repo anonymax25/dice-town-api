@@ -16,7 +16,7 @@ export class Game extends BaseEntity {
     waitingFor: number[]
 
     @Column({ nullable: true})
-    sherifUserid: string
+    sherifUserid: number
 
     @Column({ type: 'json'})
     players: Player[]
