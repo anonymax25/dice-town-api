@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer, WsResponse } from '@nestjs/websockets';
 import { Game } from 'entities/game/game.entity';
+import { Lobby } from 'entities/lobby.entity';
 import { ReadyStatus } from 'entities/lobby/ready-status';
 import { Server, Socket } from 'socket.io';
 import { LobbyService } from './lobby.service';
@@ -45,17 +46,24 @@ export class LobbyGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
   }
 
   @SubscribeMessage('joinLobbySocket')
-  handleJoinRoom(client: Socket, body: {lobbyId: string, username: string, uid: string}){
+  joinLobby(client: Socket, body: {lobbyId: string, username: string, uid: string}){
     this.server.to(body.lobbyId).emit('userJoinedLobby', body.username)
     client.join(body.lobbyId)
     client.emit('joinedLobbySocket', body.lobbyId)
   }
+
   @SubscribeMessage('leaveLobbySocket')
-  handleLeaveRoom(client: Socket, body: {lobbyId: string, username: string, uid: string}){
+  leaveLobby(client: Socket, body: {lobbyId: string, username: string, uid: string}){
     client.leave(body.lobbyId)
     client.emit('leftLobbySocket', body.lobbyId)
     this.server.to(body.lobbyId).emit('userLeftLobby', body.username)
     this.updateReadyStatus(client, new ReadyStatus(parseInt(body.lobbyId), parseInt(body.uid), false))
+  }
+  
+  @SubscribeMessage('switchStartGame')
+  async switchStartGame(client: Socket, body: {lobbyId: string}){
+    const lobby = await this.lobbyService.switchStartGame(parseInt(body.lobbyId))
+    this.server.to(body.lobbyId).emit('startGameSwitched', lobby)
   }
 }
 

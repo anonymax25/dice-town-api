@@ -1,27 +1,38 @@
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-import { Inventory } from "./inventory";
+import { BadLuck } from "./badLuck";
+import { GeneralStorms } from "./generalStorms";
 import { Player } from "./player";
+import { Property } from "./property";
 
 @Entity({name: 'game'})
 export class Game extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number
 
-    @Column('boolean')
-    gameStarted: boolean
-
     @Column()
     startTime: Date
 
-    @Column({ type: "text"})
-    waitingFor: string[]
+    @Column({ type: "json"})
+    waitingFor: number[]
 
-    @Column()
+    @Column({ nullable: true})
     sherifUserid: string
 
-    @Column({ type: 'text'})
-    inventory: Inventory
-
-    @Column({ type: 'text'})
+    @Column({ type: 'json'})
     players: Player[]
+
+    @Column()
+    nuggets: number
+
+    @Column()
+    dollar: number
+
+    @Column({ type: 'json'})
+    property: Property[]
+
+    @Column({ type: 'json'})
+    generalStorms: GeneralStorms[]
+
+    @Column({ type: 'json'})
+    badLuck: BadLuck[]
 }

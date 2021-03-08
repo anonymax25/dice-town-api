@@ -5,10 +5,12 @@ import * as crypto from "crypto"
 import { UsersService } from '../users/users.service';
 import { Message } from '../../entities/chat/message.entity';
 import { ReadyStatus } from '../../entities/lobby/ready-status';
+import { GameService } from 'modules/game/game.service';
 
 @Injectable()
 export class LobbyService extends BaseService<Lobby>{
-    constructor(private usersService: UsersService){
+    constructor(private usersService: UsersService,
+                private gameService: GameService){
         super(Lobby)
     }
 
@@ -66,7 +68,7 @@ export class LobbyService extends BaseService<Lobby>{
     async findOneLobbyPopulate(where) {
         return await this.getRepository().findOne(
             {
-                relations: ['users', 'messages'],
+                relations: ['users', 'messages', 'game'],
                 where,
             }
           );
@@ -99,4 +101,24 @@ export class LobbyService extends BaseService<Lobby>{
         lobby.readyStatus.push(new ReadyStatus(readyStatus.lobbyId, readyStatus.uid, readyStatus.isReady))
         return await this.save(lobby)
     }
+
+    async switchStartGame(lobbyId: number) {
+        let lobby = await this.findOneLobbyPopulate({id: lobbyId})
+        
+        //create game if starting
+        if(!lobby.isGameStarted && !lobby.game){
+            lobby.game = await this.gameService.create(lobby)
+        }
+
+        //pausing game, re-set isReady
+        if(lobby.isGameStarted && lobby.game){
+            lobby.readyStatus = lobby.readyStatus.map(status => {
+                status.isReady = false
+                return status
+            })
+        }
+
+        lobby.isGameStarted = !lobby.isGameStarted
+        return await this.save(lobby)
+      }
 }
